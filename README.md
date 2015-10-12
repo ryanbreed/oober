@@ -5,7 +5,12 @@ simplified TAXII client for sending CEF-formatted messages to ArcSight
 ## Installation
 
 
-    $ gem install oober
+    $ git clone https://github.com/ryanbreed/oober
+    $ cd oober
+    $ git checkout develop
+    $ bundle install --path=vendor/develop
+    $ bundle exec rake build
+    $ gem install pkg/oober-*gem
 
 ## Usage
 
