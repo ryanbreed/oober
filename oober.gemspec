@@ -20,8 +20,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'cef'
-  spec.add_dependency 'clockwork'
-  spec.add_dependency 'chronic'
   spec.add_dependency 'hashie'
   spec.add_dependency 'ruby-taxii'
   spec.add_dependency 'thor'

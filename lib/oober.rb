@@ -3,6 +3,7 @@ require 'hashie'
 require 'taxii'
 require 'cef'
 require 'json'
+require 'thor'
 
 require 'oober/version'
 require 'oober/cef_logger'
