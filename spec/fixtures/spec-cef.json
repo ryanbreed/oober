@@ -1,4 +1,5 @@
 {
-    "receiver" : "127.0.0.1",
-    "port"     : 1999
+  "type"     : "CEF::Loggers::SyslogUdp",
+  "receiver" : "127.0.0.1",
+  "port"     : 1999
 }

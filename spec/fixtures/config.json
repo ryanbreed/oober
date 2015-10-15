@@ -1,17 +1,21 @@
 {
-  "cef_host" : "127.0.0.1",
-  "cef_port" : 1999,
-  "poll_feeds" : [
+  "exporter"  : "Oober::CefLogger",
+  "extractor" : "Oober::Extractor::Stix",
+  "mapper"    : "Oober::Mapper::Cef",
+  "export_config" : "spec/fixtures/spec-cef.json",
+  "taxii_config"  : "spec/fixtures/spec-taxii.json",
+  "feed_name"     : "oober.t-7d_ip-watchlist",
+  "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"AddressObj:AddressObjectType\"][@category=\"ipv4-addr\"]/../..",
+  "extract_mappings" : [
     {
-      "name"            : "system.Default",
-      "indicator_types" : ["Malicious E-mail"],
-      "observable_mappings" : [
-        {
-          "type"       : "EmailMessageObj:EmailMessageObjectType",
-          "value_path" : "Header/From/Address_Value",
-          "cef_field"  : "sourceUserId"
-        }
-      ]
+      "type"   : "xpath",
+      "origin" : "@id",
+      "target" : "externalId"
+    },
+    {
+      "type"   : "xpath",
+      "origin" : "descendant::AddressObj:Address_Value/text()",
+      "target" : "sourceAddress"
     }
   ]
 }
