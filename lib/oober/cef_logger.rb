@@ -19,25 +19,12 @@ module Oober
     def taxii
       @taxii ||= Taxii.configure(config: taxii_config, client: Taxii::PollClient)
     end
-    def check_taxii
-      taxii.poll_service_available?
-    end
 
-    def get_feed
+    def request_message
       full_results = Taxii::Messages::Parameters::Poll.new(response_type: 'FULL')
-      taxii.poll_feed(collection_name: feed_name, poll_parameters: full_results)
+      req = Taxii::Messages::PollRequest.new(collection_name: feed_name, poll_parameters: full_results)
+      req.to_xml
     end
 
-    def stix_package_type(package)
-      package['Content']['STIX_Package'].keys.reject {|k| k.match(%r{\A(@|STIX_Header)})}.pop
-    end
-
-    def feed_exists?
-      get_feed_info!=nil
-    end
-
-    def get_feed_info
-      taxii.discover_feeds.find {|feed| feed['@feed_name']==feed_name }
-    end
   end
 end
