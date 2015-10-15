@@ -15,7 +15,7 @@ module Oober
       end
 
       def extract(type: 'xpath', origin: nil, target: nil)
-        selected.flat_map {|n| [target, n.send(type,origin).first.to_s] }
+        selected.flat_map {|n| [target.to_sym, n.send(type,origin).first.to_s.strip] }
       end
     end
   end

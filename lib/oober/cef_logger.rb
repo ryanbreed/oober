@@ -14,8 +14,22 @@ module Oober
       required: true,
       message: 'needs to point to a valid ruby-taxii PollClient config'
 
+    def event_defaults
+      @event_defaults ||= {
+        name: self.feed_name,
+        deviceProduct: 'oober',
+        receiptTime: Time.new
+      }
+    end
+
+    def poll_messages
+      event_data = extract
+      cef_events = map_extracts(event_data)
+      cef.emit(*cef_events)
+    end
+
     def cef
-      @cef ||= CEF.logger(config: export_config)
+      @cef ||= CEF.configure(export_config)
     end
 
     def taxii
@@ -23,7 +37,7 @@ module Oober
     end
 
     def map_extracts(events=extract)
-      events.map {|e| mapper.map_extract({name: self.feed_name}.merge(e))}
+      events.map {|e| mapper.map_extract(event_defaults.merge(e))}
     end
 
     def extract
