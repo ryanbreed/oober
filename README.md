@@ -1,36 +1,43 @@
 # Oober
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/oober`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+simplified TAXII client for sending CEF-formatted messages to ArcSight
 
 ## Installation
 
-Add this line to your application's Gemfile:
 
-```ruby
-gem 'oober'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install oober
+    $ git clone https://github.com/ryanbreed/oober
+    $ cd oober
+    $ git checkout develop
+    $ bundle install --path=vendor/develop
+    $ bundle exec rake build
+    $ gem install pkg/oober-*gem
 
 ## Usage
+sample configuration in spec/fixtures/config.json 
 
-TODO: Write usage instructions here
+the sample config extracts IPv4 observables and their associated Observable guid and maps them to CEF events. at this time, i've only implemented and tried http/basic auth and STIX/Cybox content mapped to CEF events.
+
+'feed_name' is the fully qualified name of the feed you'd like to poll. it is assumed you have pre-configured the feed to either only provide messages that have not been polled, or you are capable of processing duplicate events if that is not the case. 
+
+'select' is an xpath expression to select specific xpath nodes inside a taxii content block
+
+'extract_mappings' is an array of type/origin/target hashes that specifiy an extraction operation, the source data element selector, and the destination field name. stix extraction with xpath is the only thing that has been implemented so far. the 'target' field is the mapped key name the extracted value will be associated with. so far, only targeting CEF key names has been implemented. 
+
+from your code:
+
+    client=Oober.configure('path/to/config.json')
+    client.poll_messages
+
+from a shell:
+
+    oober poll --config=path/to/config.json
+
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+unit tests and docs mostly missing. need to try things out before i get more opinionated.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/oober.
+Bug reports and pull requests are welcome on GitHub at https://github.com/ryanbreed/oober.
 
