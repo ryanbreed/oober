@@ -5,7 +5,7 @@ module Oober
     desc 'poll_feed', 'poll a feed/exporter configuration'
     def poll_feed
       oob=Oober.configure(options[:config])
-      oob.poll_messages
+      oob.poll_messages.each {|e| puts e.to_cef }
     end
 
   end

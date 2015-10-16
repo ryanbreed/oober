@@ -1,0 +1,41 @@
+{
+  "exporter"  : "Oober::CefLogger",
+  "extractor" : "Oober::Extractor::Stix",
+  "mapper"    : "Oober::Mapper::Cef",
+  "export_config" : "spec/fixtures/spec-cef.json",
+  "taxii_config"  : "spec/fixtures/hat-taxii.json",
+  "feed_name"     : "guest.MalwareDomainList_Hostlist",
+  "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"DomainNameObj:DomainNameObjectType\"]/../../../..",
+  "export_defaults" : {
+    "deviceEventCategory" : "stix:Observables",
+    "deviceEventClassId"  : "DomainNameObj:DomainNameObjectType",
+    "deviceCustomString1Label" : "TLP"
+  },
+  "extract_mappings" : [
+    {
+      "type"   : "xpath",
+      "origin" : "/stix:STIX_Package/@id",
+      "target" : "devicePayloadId"
+    },
+    {
+      "type"   : "xpath",
+      "origin" : "descendant::marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
+      "target" : "deviceCustomString1"
+    },
+    {
+      "type"   : "xpath",
+      "origin" : "/stix:STIX_Package/@timestamp",
+      "target" : "endTime"
+    },
+    {
+      "type"   : "xpath",
+      "origin" : "descendant::cybox:Observable/@id",
+      "target" : "externalId"
+    },
+    {
+      "type"   : "xpath",
+      "origin" : "descendant::DomainNameObj:Value[@condition=\"Equals\"]/text()",
+      "target" : "sourceDnsDomain"
+    }
+  ]
+}

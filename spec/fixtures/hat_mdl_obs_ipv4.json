@@ -6,6 +6,10 @@
   "taxii_config"  : "spec/fixtures/spec-taxii.json",
   "feed_name"     : "guest.MalwareDomainList_Hostlist",
   "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"AddressObj:AddressObjectType\"][@category=\"ipv4-addr\"]/../..",
+  "export_defaults" : {
+    "deviceEventCategory" : "stix:Observables",
+    "deviceEventClassId"  : "AddressObj:AddressObjectType"
+  },
   "extract_mappings" : [
     {
       "type"   : "xpath",

@@ -6,7 +6,8 @@ module Oober
     property :extractor
     property :select
     property :extract_mappings
-    
+    property :export_defaults, default: Hash.new
+
     property :export_config,
       required: true,
       message: 'needs to point to a valid CEF config'
@@ -17,9 +18,10 @@ module Oober
     def event_defaults
       @event_defaults ||= {
         name: self.feed_name,
-        deviceProduct: 'oober',
+        deviceProduct: self.class.name,
+        deviceVersion: Oober::VERSION,
         receiptTime: Time.new
-      }
+      }.merge(Hashie.symbolize_keys(export_defaults))
     end
 
     def poll_messages
@@ -40,10 +42,10 @@ module Oober
       events.map {|e| mapper.map_extract(event_defaults.merge(e))}
     end
 
-    def extract
-      get_content_blocks.map {|b| extractor.new(data: b, select: self.select)}
-                        .reject {|e| e.selected.empty? }
-                        .map {|e| Hash[extract_mappings.map {|m| e.extract(m)}]}
+    def extract(blocks=get_content_blocks)
+      blocks.map    {|blk| extractor.new(data: blk, select: self.select)}
+            .reject {|ext| ext.selected.empty? }
+            .map    {|ext| Hash[extract_mappings.map {|m| ext.extract(m)}]}
     end
 
     def get_content_blocks

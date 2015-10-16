@@ -11,7 +11,7 @@ module Oober
       end
 
       def selected
-        @selected ||= xml.xpath(self.select).to_a
+        @selected ||= xml.xpath(self.select)
       end
 
       def extract(type: 'xpath', origin: nil, target: nil)
