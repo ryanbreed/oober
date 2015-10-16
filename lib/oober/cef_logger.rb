@@ -43,9 +43,9 @@ module Oober
     end
 
     def extract(blocks=get_content_blocks)
-      blocks.map    {|blk| extractor.new(data: blk, select: self.select)}
+      blocks.map    {|blk| extractor.new(data: blk, select: self.select, mappings: extract_mappings)}
             .reject {|ext| ext.selected.empty? }
-            .map    {|ext| Hash[extract_mappings.map {|m| ext.extract(m)}]}
+            .flat_map(&:extract)
     end
 
     def get_content_blocks
