@@ -1,12 +1,12 @@
 module Oober
   class CefLogger < Hashie::Dash
     property :feed_name
+
     property :mapper
     property :exporter
     property :extractor
-    property :select
-    property :extract_mappings
-    property :export_defaults, default: Hash.new
+    
+    property :extractor_configs, default: []
 
     property :export_config,
       required: true,
@@ -31,11 +31,11 @@ module Oober
     end
 
     def cef
-      @cef ||= CEF.configure(export_config)
+      @cef ||= CEF.logger(export_config)
     end
 
     def taxii
-      @taxii ||= Taxii.configure(config: taxii_config, client: Taxii::PollClient)
+      @taxii ||= Taxii::PollClient.new(taxii_config)
     end
 
     def map_extracts(events=extract)

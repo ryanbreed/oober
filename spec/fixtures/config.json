@@ -1,21 +1,45 @@
 {
+  "feed_name"     : "guest.MalwareDomainList_Hostlist",
   "exporter"  : "Oober::CefLogger",
   "extractor" : "Oober::Extractor::Stix",
   "mapper"    : "Oober::Mapper::Cef",
-  "export_config" : "spec/fixtures/spec-cef.json",
-  "taxii_config"  : "spec/fixtures/spec-taxii.json",
-  "feed_name"     : "guest.MalwareDomainList_Hostlist",
-  "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"AddressObj:AddressObjectType\"][@category=\"ipv4-addr\"]/../..",
-  "extract_mappings" : [
+  "export_config" : {
+    "type"     : "CEF::Loggers::SyslogUdp",
+    "config"   : {
+      "receiver" : "127.0.0.1",
+      "port"     : 1999
+    }
+  },
+  "taxii_config"  : {
+    "user" : "guest",
+    "pass" : "guest",
+    "url"  : "http://hailataxii.com/taxii-discovery-service"
+  },
+  "extractor_configs" : [
     {
-      "type"   : "xpath",
-      "origin" : "@id",
-      "target" : "externalId"
-    },
-    {
-      "type"   : "xpath",
-      "origin" : "descendant::AddressObj:Address_Value/text()",
-      "target" : "sourceAddress"
+      "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"AddressObj:AddressObjectType\"][@category=\"ipv4-addr\"]",
+      "defaults" : {
+        "deviceEventCategory" : "stix:Observables",
+        "deviceEventClassId"  : "AddressObj:AddressObjectType",
+        "deviceCustomString3Label" : "Obervable ID"
+      },
+      "extractions" : [
+        {
+          "type"   : "xpath",
+          "origin" : "../cybox:Description/text()",
+          "target" : "message"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "../../cybox:Observable/@id",
+          "target" : "deviceCustomString3"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : ":AddressObj:Address_Value/text()",
+          "target" : "sourceAddress"
+        }
+      ]
     }
   ]
 }
