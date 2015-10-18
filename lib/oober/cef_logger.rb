@@ -5,7 +5,7 @@ module Oober
     property :mapper
     property :exporter
     property :extractor
-    
+
     property :extractor_configs, default: []
 
     property :export_config,
@@ -42,10 +42,15 @@ module Oober
       events.map {|e| mapper.map_extract(event_defaults.merge(e))}
     end
 
+    def extractor_pipeline(blocks=get_content_blocks)
+      extractors = blocks.flat_map do |block|
+        extractor_configs.map { |conf| extractor.new(conf.merge(data: block)) }
+      end
+      extractors.reject {|ext| ext.selected.empty? }
+    end
+    
     def extract(blocks=get_content_blocks)
-      blocks.map    {|blk| extractor.new(data: blk, select: self.select, mappings: extract_mappings)}
-            .reject {|ext| ext.selected.empty? }
-            .flat_map(&:extract)
+      extractor_pipeline(blocks).flat_map(&:extract)
     end
 
     def get_content_blocks

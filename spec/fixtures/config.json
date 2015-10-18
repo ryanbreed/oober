@@ -17,29 +17,180 @@
   },
   "extractor_configs" : [
     {
+      "description" : "Malware Domain List IP Addresses",
       "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"AddressObj:AddressObjectType\"][@category=\"ipv4-addr\"]",
       "defaults" : {
-        "deviceEventCategory" : "stix:Observables",
-        "deviceEventClassId"  : "AddressObj:AddressObjectType",
+        "deviceCustomString1Label" : "TLP",
+        "deviceEventCategory"      : "stix:Observables",
         "deviceCustomString3Label" : "Obervable ID"
       },
       "extractions" : [
         {
           "type"   : "xpath",
-          "origin" : "../cybox:Description/text()",
+          "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
+          "target" : "deviceCustomString1"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "@xsi:type",
+          "target" : "deviceEventClassId"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "@category",
+          "target" : "fileType"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "../../cybox:Description/text()",
           "target" : "message"
         },
         {
           "type"   : "xpath",
-          "origin" : "../../cybox:Observable/@id",
+          "origin" : "../../../cybox:Observable/@id",
           "target" : "deviceCustomString3"
         },
         {
           "type"   : "xpath",
-          "origin" : ":AddressObj:Address_Value/text()",
+          "origin" : "AddressObj:Address_Value/text()",
           "target" : "sourceAddress"
         }
       ]
+    },
+    {
+      "description" : "Malware Domain List URLs",
+      "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"URIObj:URIObjectType\"][@type=\"URL\"]/URIObj:Value[@condition=\"Equals\"]/..",
+      "defaults" : {
+        "deviceCustomString1Label" : "TLP",
+        "deviceEventCategory" : "stix:Observables",
+        "deviceCustomString3Label" : "Obervable ID"
+      },
+      "extractions" : [
+        {
+          "type"   : "xpath",
+          "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
+          "target" : "deviceCustomString1"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "@xsi:type",
+          "target" : "deviceEventClassId"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "@type",
+          "target" : "fileType"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "../../cybox:Description/text()",
+          "target" : "message"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "../../../cybox:Observable/@id",
+          "target" : "deviceCustomString3"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "URIObj:Value/text()",
+          "target" : "requestURL"
+        }
+      ]
+    },
+    {
+      "description" : "Malware Domain List Domain Names",
+      "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"DomainNameObj:DomainNameObjectType\"]/DomainNameObj:Value[@condition=\"Equals\"]/..",
+      "defaults" : {
+        "deviceCustomString1Label" : "TLP",
+        "deviceCustomString3Label" : "Obervable ID",
+        "deviceEventCategory" : "stix:Observables",
+        "fileType" : "DNS Domain"
+      },
+      "extractions" : [
+        {
+          "type"   : "xpath",
+          "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
+          "target" : "deviceCustomString1"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "@xsi:type",
+          "target" : "deviceEventClassId"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "../../cybox:Description/text()",
+          "target" : "message"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "../../../cybox:Observable/@id",
+          "target" : "deviceCustomString3"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "DomainNameObj:Value/text()",
+          "target" : "sourceDnsDomain"
+        }
+      ]
+    },
+    {
+      "select"        : "/stix:STIX_Package/stix:Indicators",
+      "defaults" : {
+        "deviceEventCategory"      : "stix:Indicators",
+        "deviceCustomString1Label" : "TLP",
+        "deviceCustomString2Label" : "Indicated TTP",
+        "deviceCustomString3Label" : "Observable ID"
+      },
+      "extractions" : [
+        {
+          "type"   : "xpath",
+          "origin" : "descendant::indicator:Producer/stixCommon:Identity/stixCommon:Name/text()",
+          "target" : "deviceProcessName"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "/stix:STIX_Package/@id",
+          "target" : "devicePayloadId"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
+          "target" : "deviceCustomString1"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "descendant::stixCommon:TTP[@xsi:type=\"ttp:TTPType\"]/@idref",
+          "target" : "deviceCustomString2"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "descendant::indicator:Observable/@idref",
+          "target" : "deviceCustomString3"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "/stix:STIX_Package/@timestamp",
+          "target" : "endTime"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "descendant::stix:Indicator/@id",
+          "target" : "externalId"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "descendant::indicator:Description/text()",
+          "target" : "message"
+        },
+        {
+          "type"   : "xpath",
+          "origin" : "descendant::indicator:Title/text()",
+          "target" : "reason"
+        }
+      ]
+
     }
   ]
 }

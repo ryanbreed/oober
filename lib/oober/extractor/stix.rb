@@ -3,8 +3,10 @@ module Oober
     class Stix < Hashie::Dash
 
       property :data
-      property :select
-      property :mappings
+      property :select,      default: '/'
+      property :extractions, default: []
+      property :defaults,    default: {}
+      property :description, default: ""
 
       def xml
         @xml ||= Nokogiri::XML(data,nil,nil,parse_options)
@@ -25,10 +27,10 @@ module Oober
       def extract
         selected.map {|node| extract_selection(node)}
       end
-      
+
       def extract_selection(node)
-        mapped_values = mappings.map {|mapping| extract_value(mapping.merge(node: node)) }
-        Hash[*mapped_values.flatten]
+        mapped_values = extractions.map {|extraction| extract_value(extraction.merge(node: node)) }
+        Hash[*mapped_values.flatten].merge(defaults)
       end
 
       def extract_value(node: nil, type: 'xpath', origin: nil, target: nil)
@@ -36,7 +38,7 @@ module Oober
           target_val = ''
           begin
             target_val = node.send(type,origin).first.to_s.strip
-          rescue 
+          rescue Exception => e
             STDERR.puts "FAILED TO EXTRACT #{origin}"
             STDERR.puts e.backtrace
             STDERR.puts e

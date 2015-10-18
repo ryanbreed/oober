@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+lib = File.join(File.dirname(File.expand_path(__FILE__)),'..','lib')
+$LOAD_PATH << lib
+
+require 'nokogiri'
+require 'thor'
+require 'pry'
+require 'readline'
+
+def list_children(node)
+  puts 'Children: '
+  grouped = node.children.group_by {|n| name_of(n)}
+  puts grouped.map {|n,c| format('%s: %d',n,c.size) }.join(', ')
+end
+
+def name_of(node)
+  format('%s:%s',node.namespace.prefix, node.name)
+end
+
+class XPathTester < Thor
+  class_option :dir, default: 'tmp'
+  class_option :separator, type: :string, default: '----%s/%d----'
+  desc 'test FILE', 'interactively test queries against FILE'
+  def test(*files)
+    xmls=files.map do |filename|
+      filedata = File.read(filename)
+      Nokogiri::XML(filedata,nil,nil,Nokogiri::XML::ParseOptions::DEFAULT_XML|Nokogiri::XML::ParseOptions::NOBLANKS)
+    end
+    file_xmls=Hash[files.zip(xmls)]
+    while query = Readline.readline('XPath Query> ', true)
+      if query.split(' ').size > 1
+        cmd,q = query.split
+      else
+        q = query
+        cmd = nil
+      end
+      file_xmls.each do |filename, xml|
+        begin
+          #puts format('----/%s',filename)
+          xml.xpath(q).each_with_index do |node,index|
+            puts format(options[:separator],filename,index)
+            case cmd
+              when nil
+                puts node.to_s
+              when /save/
+                fname = File.join(options[:dir],format('saved_%012d.xml',index))
+                File.open(fname,'w') {|f| f.puts node.children.first.to_s }
+              when /children/
+                list_children(node)
+              else
+                puts "unknown operation: #{cmd}"
+            end
+          end
+        rescue Nokogiri::XML::XPath::SyntaxError => e
+          #puts "could not get #{q}"
+        end
+      end
+    end
+  end
+end
+
+XPathTester.start(ARGV)
