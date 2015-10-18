@@ -5,7 +5,11 @@ module Oober
     desc 'poll_feed', 'poll a feed/exporter configuration'
     def poll_feed
       oob=Oober.configure(options[:config])
-      oob.poll_messages.each {|e| puts e.to_cef }
+      oob.extract_blocks.each do |ext|
+        e = CEF::Event.new(ext)
+        oob.cef.emit(e)
+        puts e.to_cef
+      end
     end
 
     desc 'download_feed', 'download raw data for a feed/exporter config'
@@ -13,7 +17,7 @@ module Oober
     def download_feed
       oob=Oober.configure(options[:config])
       data_blocks = oob.get_content_blocks
-      data_blocks.each_with_index do |block,index| 
+      data_blocks.each_with_index do |block,index|
         filename = format('%s_%08d.%08d.xml',
                           oob.feed_name,
                           Time.new.to_i,

@@ -2,7 +2,6 @@
   "feed_name"     : "guest.MalwareDomainList_Hostlist",
   "exporter"  : "Oober::CefLogger",
   "extractor" : "Oober::Extractor::Stix",
-  "mapper"    : "Oober::Mapper::Cef",
   "export_config" : {
     "type"     : "CEF::Loggers::SyslogUdp",
     "config"   : {
@@ -26,32 +25,26 @@
       },
       "extractions" : [
         {
-          "type"   : "xpath",
           "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
           "target" : "deviceCustomString1"
         },
         {
-          "type"   : "xpath",
           "origin" : "@xsi:type",
           "target" : "deviceEventClassId"
         },
         {
-          "type"   : "xpath",
           "origin" : "@category",
           "target" : "fileType"
         },
         {
-          "type"   : "xpath",
           "origin" : "../../cybox:Description/text()",
           "target" : "message"
         },
         {
-          "type"   : "xpath",
           "origin" : "../../../cybox:Observable/@id",
           "target" : "deviceCustomString3"
         },
         {
-          "type"   : "xpath",
           "origin" : "AddressObj:Address_Value/text()",
           "target" : "sourceAddress"
         }
@@ -67,32 +60,26 @@
       },
       "extractions" : [
         {
-          "type"   : "xpath",
           "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
           "target" : "deviceCustomString1"
         },
         {
-          "type"   : "xpath",
           "origin" : "@xsi:type",
           "target" : "deviceEventClassId"
         },
         {
-          "type"   : "xpath",
           "origin" : "@type",
           "target" : "fileType"
         },
         {
-          "type"   : "xpath",
           "origin" : "../../cybox:Description/text()",
           "target" : "message"
         },
         {
-          "type"   : "xpath",
           "origin" : "../../../cybox:Observable/@id",
           "target" : "deviceCustomString3"
         },
         {
-          "type"   : "xpath",
           "origin" : "URIObj:Value/text()",
           "target" : "requestURL"
         }
@@ -109,27 +96,22 @@
       },
       "extractions" : [
         {
-          "type"   : "xpath",
           "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
           "target" : "deviceCustomString1"
         },
         {
-          "type"   : "xpath",
           "origin" : "@xsi:type",
           "target" : "deviceEventClassId"
         },
         {
-          "type"   : "xpath",
           "origin" : "../../cybox:Description/text()",
           "target" : "message"
         },
         {
-          "type"   : "xpath",
           "origin" : "../../../cybox:Observable/@id",
           "target" : "deviceCustomString3"
         },
         {
-          "type"   : "xpath",
           "origin" : "DomainNameObj:Value/text()",
           "target" : "sourceDnsDomain"
         }
@@ -145,52 +127,42 @@
       },
       "extractions" : [
         {
-          "type"   : "xpath",
           "origin" : "descendant::indicator:Producer/stixCommon:Identity/stixCommon:Name/text()",
           "target" : "deviceProcessName"
         },
         {
-          "type"   : "xpath",
           "origin" : "/stix:STIX_Package/@id",
           "target" : "devicePayloadId"
         },
         {
-          "type"   : "xpath",
           "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
           "target" : "deviceCustomString1"
         },
         {
-          "type"   : "xpath",
           "origin" : "descendant::stixCommon:TTP[@xsi:type=\"ttp:TTPType\"]/@idref",
           "target" : "deviceCustomString2"
         },
         {
-          "type"   : "xpath",
           "origin" : "descendant::indicator:Observable/@idref",
           "target" : "deviceCustomString3"
         },
         {
-          "type"   : "xpath",
           "origin" : "/stix:STIX_Package/@timestamp",
           "target" : "endTime"
         },
         {
-          "type"   : "xpath",
           "origin" : "descendant::stix:Indicator/@id",
           "target" : "externalId"
         },
         {
-          "type"   : "xpath",
           "origin" : "descendant::indicator:Description/text()",
           "target" : "message"
         },
         {
-          "type"   : "xpath",
           "origin" : "descendant::indicator:Title/text()",
           "target" : "reason"
         }
       ]
-
     }
   ]
 }

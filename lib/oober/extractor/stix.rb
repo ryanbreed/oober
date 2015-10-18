@@ -33,11 +33,11 @@ module Oober
         Hash[*mapped_values.flatten].merge(defaults)
       end
 
-      def extract_value(node: nil, type: 'xpath', origin: nil, target: nil)
+      def extract_value(node: nil, origin: nil, target: nil)
           target_key = target.to_sym
           target_val = ''
           begin
-            target_val = node.send(type,origin).first.to_s.strip
+            target_val = node.xpath(origin).first.to_s.strip
           rescue Exception => e
             STDERR.puts "FAILED TO EXTRACT #{origin}"
             STDERR.puts e.backtrace

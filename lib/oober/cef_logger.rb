@@ -2,7 +2,6 @@ module Oober
   class CefLogger < Hashie::Dash
     property :feed_name
 
-    property :mapper
     property :exporter
     property :extractor
 
@@ -25,9 +24,9 @@ module Oober
     end
 
     def poll_messages
-      event_data = extract
-      cef_events = map_extracts(event_data)
-      cef.emit(*cef_events)
+      extract_blocks.each do |ext|
+        cef.emit(CEF::Event.new(ext))
+      end
     end
 
     def cef
@@ -38,8 +37,8 @@ module Oober
       @taxii ||= Taxii::PollClient.new(taxii_config)
     end
 
-    def map_extracts(events=extract)
-      events.map {|e| mapper.map_extract(event_defaults.merge(e))}
+    def transform_extracts(events=extract)
+      events.map {|e| CEF::Event.new(e) }
     end
 
     def extractor_pipeline(blocks=get_content_blocks)
@@ -48,8 +47,8 @@ module Oober
       end
       extractors.reject {|ext| ext.selected.empty? }
     end
-    
-    def extract(blocks=get_content_blocks)
+
+    def extract_blocks(blocks=get_content_blocks)
       extractor_pipeline(blocks).flat_map(&:extract)
     end
 
