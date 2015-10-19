@@ -1,5 +1,3 @@
-
-
 def list_children(node)
   puts 'Children: '
   grouped = node.children.group_by {|n| name_of(n)}
@@ -10,18 +8,31 @@ def name_of(node)
   format('%s:%s',node.namespace.prefix, node.name)
 end
 
-
 module Oober
   class Cli < Thor
     class_option :config, default: File.join(ENV['HOME'],'.oober.json')
 
     desc 'poll_feed', 'poll a feed/exporter configuration'
+    option :warn, type: :boolean, default: false
     def poll_feed
       oob=Oober.configure(options[:config])
-      oob.extract_blocks.each do |ext|
-        e = CEF::Event.new(ext)
-        oob.cef.emit(e)
-        puts e.to_cef
+      errored_blocks = []      
+      oob.extract_blocks.each do |extracted_hash|
+        begin
+          event = CEF::Event.new(extracted_hash)
+          oob.cef.emit(event)
+        rescue Exception  => exception
+          if options[:warn]
+            errored_blocks.push([extracted_hash,exception])
+          end
+        else
+          puts event.to_cef
+        end
+        errored_blocks.each do |blk|
+          event, error = blk
+          STDERR.puts "ERROR: #{error.to_s}"
+          STDERR.puts "ERRORED MESSAGE: #{JSON.pretty_generate(event)}"
+        end
       end
     end
 
@@ -29,7 +40,7 @@ module Oober
     option :dir, default: 'tmp'
     def download_feed
       oob=Oober.configure(options[:config])
-      data_blocks = oob.get_content_blocks
+      data_blocks = oob.get_blocks
       data_blocks.each_with_index do |block,index|
         filename = format('%s_%08d.%08d.xml',
                           oob.feed_name,
@@ -56,7 +67,7 @@ module Oober
       binding.pry
     end
 
-    desc 'test FILE(s)', 'interactively test queries against FILE(s)'
+    desc 'xpath FILE(s)', 'interactively test XPath queries against FILE(s)'
     option :dir, default: 'tmp'
     option :separator, type: :string, default: '----%s/%d----'
     def xpath(*files)
@@ -78,7 +89,7 @@ module Oober
 
         file_xmls.each do |filename, xml|
           begin
-            xml.xpath(q).each_with_index do |node,index|
+            [*xml.xpath(q)].each_with_index do |node,index|
               puts format(options[:separator],filename,index)
               case cmd
                 when nil

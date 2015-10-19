@@ -20,13 +20,7 @@ module Oober
         deviceProduct: self.class.name,
         deviceVersion: Oober::VERSION,
         receiptTime: Time.new
-      }.merge(Hashie.symbolize_keys(export_defaults))
-    end
-
-    def poll_messages
-      extract_blocks.each do |ext|
-        cef.emit(CEF::Event.new(ext))
-      end
+      }
     end
 
     def cef
@@ -37,8 +31,8 @@ module Oober
       @taxii ||= Taxii::PollClient.new(taxii_config)
     end
 
-    def transform_extracts(events=extract)
-      events.map {|e| CEF::Event.new(e) }
+    def get_blocks
+      taxii.get_content_blocks(self.request_message)
     end
 
     def extractor_pipeline(blocks=get_blocks)
@@ -50,10 +44,17 @@ module Oober
 
     def extract_blocks(blocks=get_blocks)
       extractor_pipeline(blocks).flat_map(&:extract)
+                                .map {|extracted| extracted.merge(event_defaults)}
     end
 
-    def get_blocks
-      taxii.get_content_blocks(self.request_message)
+    def transform_extracts(events=extract_blocks)
+      events.map {|event| CEF::Event.new(event) }
+    end
+
+    def poll_messages
+      transform_extracts(extract_blocks).each do |transformed_event|
+        cef.emit(transformed_event)
+      end
     end
 
     def request_message
@@ -61,6 +62,7 @@ module Oober
       req = Taxii::Messages::PollRequest.new(collection_name: feed_name, poll_parameters: full_results)
       req.to_xml
     end
+
 
   end
 end

@@ -37,7 +37,7 @@ module Oober
           target_key = target.to_sym
           target_val = ''
           begin
-            target_val = node.xpath(origin).first.to_s.strip
+            target_val = [*node.xpath(origin)].first.to_s.strip
           rescue Exception => e
             STDERR.puts "FAILED TO EXTRACT #{origin}"
             STDERR.puts e.backtrace
