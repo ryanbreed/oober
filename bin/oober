@@ -1,7 +1,12 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.push(File.join(File.dirname(__FILE__), "..", "lib"))
 
+require 'thor'
+require 'readline'
+require 'pry'
+
 require 'oober'
+
 require 'oober/cli'
 
 Oober::Cli.start(ARGV)

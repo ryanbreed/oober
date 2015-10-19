@@ -41,18 +41,18 @@ module Oober
       events.map {|e| CEF::Event.new(e) }
     end
 
-    def extractor_pipeline(blocks=get_content_blocks)
+    def extractor_pipeline(blocks=get_blocks)
       extractors = blocks.flat_map do |block|
         extractor_configs.map { |conf| extractor.new(conf.merge(data: block)) }
       end
       extractors.reject {|ext| ext.selected.empty? }
     end
 
-    def extract_blocks(blocks=get_content_blocks)
+    def extract_blocks(blocks=get_blocks)
       extractor_pipeline(blocks).flat_map(&:extract)
     end
 
-    def get_content_blocks
+    def get_blocks
       taxii.get_content_blocks(self.request_message)
     end
 
