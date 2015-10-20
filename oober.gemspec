@@ -6,11 +6,11 @@ require 'oober/version'
 Gem::Specification.new do |spec|
   spec.name          = 'oober'
   spec.version       = Oober::VERSION
-  spec.authors       = ['rbreed']
-  spec.email         = ['rbreed@ercot.com']
+  spec.authors       = ['Ryan Breed']
+  spec.email         = ['opensource@breed.org']
 
-  spec.summary       = %q{ like taxii but easier }
-  spec.description   = %q{ taxii-cef gateway }
+  spec.summary       = %q{ simplified interface for polling TAXII services and exporting structured data }
+  spec.description   = %q{ flexible TAXII client for integrating cyber threat information with all your stuff }
   spec.homepage      = 'https://github.com/ryanbreed/oober'
 
 
@@ -19,10 +19,10 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'cef'
-  spec.add_dependency 'hashie'
-  spec.add_dependency 'ruby-taxii'
-  spec.add_dependency 'thor'
+  spec.add_dependency 'hashie',     '~> 3.4'
+  spec.add_dependency 'thor',       '~> 0.19'
+  spec.add_dependency 'cef',        '~> 2.1'
+  spec.add_dependency 'ruby-taxii', '0.3.1'
 
   spec.add_development_dependency 'bundler', '~> 1.10'
   spec.add_development_dependency 'rake', '~> 10.0'
