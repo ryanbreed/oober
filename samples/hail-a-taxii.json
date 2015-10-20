@@ -1,0 +1,168 @@
+{
+  "feed_name"     : "guest.MalwareDomainList_Hostlist",
+  "exporter"  : "Oober::CefLogger",
+  "extractor" : "Oober::Extractor::Stix",
+  "export_config" : {
+    "type"     : "CEF::Loggers::SyslogUdp",
+    "config"   : {
+      "receiver" : "127.0.0.1",
+      "port"     : 1999
+    }
+  },
+  "taxii_config"  : {
+    "user" : "guest",
+    "pass" : "guest",
+    "url"  : "http://hailataxii.com/taxii-discovery-service"
+  },
+  "extractor_configs" : [
+    {
+      "description" : "Malware Domain List IP Addresses",
+      "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"AddressObj:AddressObjectType\"][@category=\"ipv4-addr\"]",
+      "defaults" : {
+        "deviceCustomString1Label" : "TLP",
+        "deviceEventCategory"      : "stix:Observables",
+        "deviceCustomString3Label" : "Obervable ID"
+      },
+      "extractions" : [
+        {
+          "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
+          "target" : "deviceCustomString1"
+        },
+        {
+          "origin" : "@xsi:type",
+          "target" : "deviceEventClassId"
+        },
+        {
+          "origin" : "@category",
+          "target" : "fileType"
+        },
+        {
+          "origin" : "../../cybox:Description/text()",
+          "target" : "message"
+        },
+        {
+          "origin" : "../../../cybox:Observable/@id",
+          "target" : "deviceCustomString3"
+        },
+        {
+          "origin" : "AddressObj:Address_Value/text()",
+          "target" : "sourceAddress"
+        }
+      ]
+    },
+    {
+      "description" : "Malware Domain List URLs",
+      "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"URIObj:URIObjectType\"][@type=\"URL\"]/URIObj:Value[@condition=\"Equals\"]/..",
+      "defaults" : {
+        "deviceCustomString1Label" : "TLP",
+        "deviceEventCategory" : "stix:Observables",
+        "deviceCustomString3Label" : "Obervable ID"
+      },
+      "extractions" : [
+        {
+          "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
+          "target" : "deviceCustomString1"
+        },
+        {
+          "origin" : "@xsi:type",
+          "target" : "deviceEventClassId"
+        },
+        {
+          "origin" : "@type",
+          "target" : "fileType"
+        },
+        {
+          "origin" : "../../cybox:Description/text()",
+          "target" : "message"
+        },
+        {
+          "origin" : "../../../cybox:Observable/@id",
+          "target" : "deviceCustomString3"
+        },
+        {
+          "origin" : "URIObj:Value/text()",
+          "target" : "requestURL"
+        }
+      ]
+    },
+    {
+      "description" : "Malware Domain List Domain Names",
+      "select"        : "/stix:STIX_Package/stix:Observables/cybox:Observable/cybox:Object/cybox:Properties[@xsi:type=\"DomainNameObj:DomainNameObjectType\"]/DomainNameObj:Value[@condition=\"Equals\"]/..",
+      "defaults" : {
+        "deviceCustomString1Label" : "TLP",
+        "deviceCustomString3Label" : "Obervable ID",
+        "deviceEventCategory" : "stix:Observables",
+        "fileType" : "DNS Domain"
+      },
+      "extractions" : [
+        {
+          "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
+          "target" : "deviceCustomString1"
+        },
+        {
+          "origin" : "@xsi:type",
+          "target" : "deviceEventClassId"
+        },
+        {
+          "origin" : "../../cybox:Description/text()",
+          "target" : "message"
+        },
+        {
+          "origin" : "../../../cybox:Observable/@id",
+          "target" : "deviceCustomString3"
+        },
+        {
+          "origin" : "DomainNameObj:Value/text()",
+          "target" : "sourceDnsDomain"
+        }
+      ]
+    },
+    {
+      "select"        : "/stix:STIX_Package/stix:Indicators",
+      "defaults" : {
+        "deviceEventCategory"      : "stix:Indicators",
+        "deviceCustomString1Label" : "TLP",
+        "deviceCustomString2Label" : "Indicated TTP",
+        "deviceCustomString3Label" : "Observable ID"
+      },
+      "extractions" : [
+        {
+          "origin" : "descendant::indicator:Producer/stixCommon:Identity/stixCommon:Name/text()",
+          "target" : "deviceProcessName"
+        },
+        {
+          "origin" : "/stix:STIX_Package/@id",
+          "target" : "devicePayloadId"
+        },
+        {
+          "origin" : "/stix:STIX_Package/stix:STIX_Header/stix:Handling/marking:Marking/marking:Marking_Structure[@xsi:type=\"tlpMarking:TLPMarkingStructureType\"]/@color",
+          "target" : "deviceCustomString1"
+        },
+        {
+          "origin" : "descendant::stixCommon:TTP[@xsi:type=\"ttp:TTPType\"]/@idref",
+          "target" : "deviceCustomString2"
+        },
+        {
+          "origin" : "descendant::indicator:Observable/@idref",
+          "target" : "deviceCustomString3"
+        },
+        {
+          "origin" : "/stix:STIX_Package/@timestamp",
+          "target" : "endTime"
+        },
+        {
+          "origin" : "descendant::stix:Indicator/@id",
+          "target" : "externalId"
+        },
+        {
+          "origin" : "descendant::indicator:Description/text()",
+          "target" : "message"
+        },
+        {
+          "origin" : "descendant::indicator:Title/text()",
+          "target" : "reason"
+        }
+      ]
+    }
+  ]
+}

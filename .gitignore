@@ -9,4 +9,4 @@
 /tmp/
 /vendor/bundle/
 /log/
-/spec/fixtures/spec-taxii.json
+/spec/fixtures/nope/
