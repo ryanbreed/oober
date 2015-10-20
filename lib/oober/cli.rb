@@ -145,11 +145,11 @@ module Oober
       file_xmls=Hash[files.zip(xmls)]
 
       while query_line = Readline.readline(format('XPath Query[%d]> ',files.size), true)
-        if matched = query_line.match(%r{\A(children|save|uniq) (.*)})
+        if matched = query_line.match(%r{\A(print|children|save|uniq) (.*)})
           cmd   = matched[1]
           query = matched[2]
         else
-          query = query_line
+          query = query_line.strip
           cmd   = 'print'
         end
 
